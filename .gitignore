@@ -1,0 +1,32 @@
+# Node modules
+node_modules/
+
+# Environment files
+.env
+
+# Auth0 secrets
+.auth0-secrets.json
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# IDE and editor files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Build artifacts and dependencies
+dist/
+build/
+*.cache
+
+# Git-specific files
+.git/
+.gitattributes

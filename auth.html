@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication Page</title>
+    <style>
+        /* Inline styling */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+        .auth-container {
+            text-align: center;
+            padding: 30px;
+            border-radius: 8px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        .auth-container h1 {
+            color: #4CAF50;
+        }
+        .auth-container p {
+            color: #333;
+        }
+        .auth-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .auth-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+
+<div class="auth-container" id="auth-container">
+    <h1>Authentication Required</h1>
+    <p>Welcome! Please log in to add DeputyDevSolutions.</p>
+    <button class="auth-button" onclick="login()">Login</button>
+</div>
+
+<!-- Auth0 SDK -->
+<script src="https://cdn.auth0.com/js/auth0-spa-js/1.13/auth0-spa-js.production.js"></script>
+
+<script>
+    // Initialize Auth0 configuration
+    const authConfig = {
+        domain: "deputymods.us.auth0.com",
+        clientId: "E4upwCesTyxml0OyvW7fHpafOINwWObj",
+    };
+
+    // Auth0 client instance
+    let auth0 = null;
+
+    // Initialize Auth0 client
+    async function initAuth0() {
+        auth0 = await createAuth0Client({
+            domain: authConfig.domain,
+            client_id: authConfig.clientId,
+        });
+
+        // Check authentication on page load
+        if (await auth0.isAuthenticated()) {
+            showCongratsMessage();
+        } else {
+            const query = window.location.search;
+            if (query.includes("code=") && query.includes("state=")) {
+                await auth0.handleRedirectCallback();
+                window.history.replaceState({}, document.title, "/auth.html");
+                if (await auth0.isAuthenticated()) {
+                    showCongratsMessage();
+                }
+            }
+        }
+    }
+
+    // Display the congratulatory message
+    function showCongratsMessage() {
+        document.getElementById('auth-container').innerHTML = `
+            <h1>Congratulations!</h1>
+            <p>You’ve successfully added DeputyDevSolutions.</p>
+        `;
+    }
+
+    // Login function
+    async function login() {
+        await auth0.loginWithRedirect({
+            redirect_uri: window.location.origin + "/auth.html"
+        });
+    }
+
+    // Initialize the Auth0 client
+    window.onload = initAuth0;
+</script>
+
+</body>
+</html>
